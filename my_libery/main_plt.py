@@ -14,6 +14,9 @@ class mymain(job):
             back()
 
             show_all_scripts()
+
+            end()
+            exit()
             '''
         return h
     

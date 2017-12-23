@@ -30,8 +30,7 @@ class mygroup(job):
         self.cmd.my_con.sockets[name]['s'].send((name+':'+password+':'+self.user_name).encode())
         ans = self.cmd.my_con.sockets[name]['s'].recv(1024).decode()
         if ans == 'ok':
-            self.cmd.back_job = self.cmd.job
-            self.cmd.job = name
+            self.cmd.set_job(name)
             return '?ok you connected.'
         else:
             return ans
