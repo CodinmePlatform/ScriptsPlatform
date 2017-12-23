@@ -6,6 +6,7 @@ class mygame(job):
         self.name = ''
         self.password = ''
         self.my_server = None
+        self.account_name = ''
         
     def new_server(self, name, password):
         self.name = name
@@ -36,8 +37,6 @@ class mygame(job):
         self.cmd.my_con.sockets[name]['s'].recv(1024)
         self.cmd.my_con.sockets[name]['s'].send(b"0")
         self.cmd.my_con.sockets[name]['s'].recv(1024)
-        self.cmd.back_job = self.cmd.job
-        self.cmd.job = name
         return '^your connected start hack.'
 
     def help(self):
@@ -55,6 +54,12 @@ class mygame(job):
     def start(self, cmd):
         self.cmd = cmd
         return '^for help enter help()'
+
+    def account(self):
+        if self.account_name:
+            return ' --> ' + self.account_name
+        else:
+            return ''
 game = mygame()
         
     

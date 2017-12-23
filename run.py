@@ -1,8 +1,9 @@
-from random import randint
 import os
 import socket
+from random import randint
 
 from my_libery.imports.EDY import EDY
+from my_libery.imports.job_obj import job_obj
 from my_libery.imports.threads import threads
 from my_libery.imports.connections import connections
 
@@ -22,12 +23,10 @@ for j in __folders__:
 
 class cmd(object):
     def __init__(self):
-        self.job = 'main_plt'
+        self.job = job_obj('main_plt', eval('main_plt').account)
         self.threads = threads()
         self.my_con = connections()
         self.exit = False
-        self.back_job = ''
-        self.job_obj = eval(self.job)
         self.functions = [packeg.update]
         self.imports = __import__
 
@@ -36,27 +35,44 @@ class cmd(object):
 
     def run(self):
         while not self.exit:
-            user_input = input('%s >>> '%(self.job + self.job_obj.account()))
+            if self.is_connect():
+                name = self.my_con.get_name()
+            else:
+                name = self.job.get_job()
+            user_input = input('%s >>> '%(name))
 
+            if not user_input:
+                continue
             self.inp_control(user_input)
             if self.exit:
                 break
-            
+            self.run_commend(user_input)
+
+        self.close()
+
+    def run_commend(self, user_input = '', progrem = False):
+        if not progrem:
             if self.is_connect():
-                re = self.my_con.send(self.job, user_input)
+                re = self.my_con.send(self.my_con.get_name(), user_input)
                 print('\n### '+user_input+' ###')
                 self.smart_print(re)
                 print('### '+user_input+' ###\n')
             else:
-                re = self.inp(user_input)
+                re = self.inp_test(user_input)
                 print('\n### '+user_input+' ###')
                 self.smart_print(re)
                 print('### '+user_input+' ###\n')
 
             for i in self.functions:
                 i(user_input, re)
-        self.close()
-        
+        else:
+            if self.is_connect():
+                re = self.my_con.send(self.my_con.get_name(), user_input)
+                self.smart_print(re)
+            else:
+                re = self.inp_test(user_input)
+                self.smart_print(re)
+
     def close(self):
         self.my_con.close()
         self.threads.close()
@@ -83,7 +99,7 @@ class cmd(object):
         if user_input == 'help':
             return '*For help enter help()'
         try:
-            return eval(('%s.'%self.job) + user_input)
+            return eval(('%s.'%self.job.get_name()) + user_input)
         except:
             pass
         try:
@@ -100,30 +116,29 @@ class cmd(object):
             self.my_con.close()
         elif user_input == 'back()':
             if self.is_connect():
-                self.my_con.sockets[self.job]['s'].close()
-                self.my_con.sockets[self.job]['con'] = False
+                self.my_con.sockets[self.my_con.get_name()]['s'].close()
+                self.my_con.sockets[self.my_con.get_name()]['con'] = False
                 
         
 
     def inp_test(self, user_input):
         try:
-            return eval(self.job + '.' + user_input)
+            return eval(self.job.get_name() + '.' + user_input)
         except AttributeError:
             return eval('self.' + user_input)
         except SyntaxError:
             return '*Syntax error try help()'
 
     def back(self):
-        self.back_job, self.job = self.job, self.back_job
+        self.job.back()
         return '?back'
 
     def set_job(self, name):
         try:
-            eval(name).help()
-            res = eval(name).start(self)
-            self.back_job = self.job
-            self.job = name
-            self.job_obj = eval(self.job)
+            res = eval(name).start(self) + '\n'
+            res += eval(name).help()
+            self.job.set_job(name)
+            self.job.set_account(eval(name).account)
             return res
         except:
             return('*' + name + ' is not a job')

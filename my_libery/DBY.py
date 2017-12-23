@@ -16,6 +16,8 @@ class DBY_obj(job.job):
             file += self.fileType
         if password:
             self.en_de = EDY.EDY(password)
+        else:
+            self.en_de = None
         if self.en_de:
             open(self.path + '\%s'%(file), 'w').write(str(self.en_de.en(data)))
         else:
@@ -27,6 +29,8 @@ class DBY_obj(job.job):
             file += self.fileType
         if password:
             self.en_de = EDY.EDY(password)
+        else:
+            self.en_de = None
         if self.en_de:
             try:
                 data = self.en_de.de(eval(open(self.path + '\%s'%(file), 'r').read()))

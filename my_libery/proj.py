@@ -53,30 +53,6 @@ class myprosses(job):
         self.set('password', password)
         return '^create project.'
 
-    def run(self):
-        res = ''
-        if not self.compil:
-            res = self.compail()
-        print(self.progrem['name'], 'is runing...')
-        os.system(r'python my_libery\finish_projects\%s.py'%self.progrem['name'])
-        res += '\nproject runing...'
-        return res
-        
-    def compail(self):
-        for a, b in self.cods.items():
-            try:
-                self.cods[a].connect_obj = self.cods[self.cods[a].connect]
-            except:
-                pass
-        file = open(r'my_libery\types\%s\_compail.py'%self.progrem['type'], 'r').read()
-        #try:
-        exec(file)
-        #except:
-            #return '*Compail error'
-        
-        self.compil = True
-        return('^' + self.progrem['name'] + ' is cmpail...')
-
     def add(self, code, name, loc):
         self.cods[name] = code_node(name, loc, code)
 
@@ -167,9 +143,6 @@ class myprosses(job):
 
             connect(<code_name>, <code_name>)
             Exampel: connect('_server', '_protocol')
-
-            end()
-            exit()
             '''
         return(h)
     #help

@@ -1,0 +1,1 @@
+set_job('group')#$#new_group('name', 'pass')#$#run()#$#join('127.0.0.1', 'name', 'pass')#$#show('all')#$#show('proj')#$#set('name', 'name')

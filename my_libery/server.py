@@ -12,6 +12,7 @@ class server_obj(job):
         self.proj = script()
         self.port = 28
         self.cmd = None
+        self.s = None
         try:
             self.proj.load(name, password)
         except:
@@ -20,18 +21,18 @@ class server_obj(job):
         self.names = {}
         
     def run(self):
-        s = socket.socket()
-        s.bind(('0.0.0.0', self.port))
-        s.listen(5)
+        self.s = socket.socket()
+        self.s.bind(('0.0.0.0', self.port))
+        self.s.listen(5)
         self.ed = EDY(self.password)
         ocs = []
         bay = b'goodBay'
         while self.activ:
             time.sleep(0.1)
-            rlist, wlist, xlist = select.select([s] + ocs, ocs, [])
+            rlist, wlist, xlist = select.select([self.s] + ocs, ocs, [])
             for current_socket in rlist:
-                if current_socket is s:
-                    (new_socket, address) = s.accept()
+                if current_socket is self.s:
+                    (new_socket, address) = self.s.accept()
                     name_and_pass = new_socket.recv(1024).decode().split(':')
                     ocs = self.connect(name_and_pass, new_socket, ocs)
                 else:
@@ -42,7 +43,7 @@ class server_obj(job):
                     except:
                         ocs = self.disconnect(current_socket, ocs)
             self.send_waiting_messages(wlist)
-        s.close()
+        self.s.close()
     
     def send_waiting_messages(self, wlist):
         for sock in wlist:

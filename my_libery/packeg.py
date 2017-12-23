@@ -1,5 +1,6 @@
 from my_libery.imports.job import job
 from my_libery.DBY import DBY_obj
+from os import listdir
 
 class mypackeg(job):
     def __init__(self):
@@ -10,7 +11,10 @@ class mypackeg(job):
 
     def help(self):
         h = '''^
+        reaset()
         show()
+
+        show_all_packegs()
         
         save(<name>)
 
@@ -34,7 +38,7 @@ class mypackeg(job):
             self.new_packeg += inp + '#$#'
 
     def save(self, name):
-        self.db.save(name + self.fileType, self.new_packeg)
+        self.db.save(name + self.fileType, self.new_packeg[:-3])
         return '^packeg saved.'
 
     def load(self, name):
@@ -43,13 +47,20 @@ class mypackeg(job):
         except:
             return '*packeg not fuond.'
         for i in data.split('#$#'):
-            print('[->]'+ i + ':')
+            print('[->] '+ i + ':')
             try:
-                self.cmd.smart_print(self.cmd.inp(i))
+                self.cmd.run_commend(i, True)
             except:
                 pass
         return '^loaded sucssful.'
 
+    def show_all_packegs(self):
+        st = ""
+        for i in listdir('my_libery\DB'):
+            if self.fileType in i:
+                st += '       ' + i.replace(self.fileType, '') + '\n'
+        return '^' + st
+            
     def show(self):
         return '^' + ''.join(i+'\n' for i in self.new_packeg.split('#$#')[:-1])
 

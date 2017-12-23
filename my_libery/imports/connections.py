@@ -5,6 +5,12 @@ class connections(object):
     def __init__(self):
         self.s = socket.socket()
         self.sockets = {'main':{'s':self.s, 'con':False}}
+
+    def get_name(self):
+        for a, b in self.sockets.items():
+            if b['con']:
+                return a
+        return None
         
     def connect(self, name, server_addr):
         try:
