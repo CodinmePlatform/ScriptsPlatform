@@ -12,17 +12,32 @@ class mygroup(job):
         self.my_server = None
         self.s = None
         self.user_name = ''
+        self.script = None
         self.cmd = None
         
     def new_group(self, name, password = '', prog = 'proj'):
         self.name = name
         self.password = password
         if name:
-            self.my_server = server(name, password, self.cmd.imports[prog])
+            self.my_server = server(name, password, self._protocol)
         else:
             return '*the name cant be empty.'
         self.ed = EDY(password)
         return '^group created.'
+
+    def _protocol(self, sock, users):
+        if sock in users.keys() and users[sock]:
+            data = users[sock]
+            try:
+                to_run = "self.script.%s" % data
+                out = eval(to_run)
+            except:
+                out = '<Error try help()>'
+            if out == None:
+                out = 'None'
+            out = str(self.ed.en(str(out)))
+            print(out)
+            sock.send(out.encode())
     
     def join(self, ip, name, password = ''):
         self.cmd.my_con.new_socket(name, password)
@@ -48,7 +63,7 @@ class mygroup(job):
         return self.ed.de(eval(self.s.recv(2048).decode()))
     
     def stop(self):
-        self.my_server.activ = False
+        self.my_server.stop_server()
         return '?group stoped.'
         
     def show(self, name):
@@ -87,6 +102,7 @@ class mygroup(job):
 
     def start(self, cmd):
         self.cmd = cmd
+        self.script = self.cmd.imports['proj']()
         self.user_name = input('Enter your name: ')
         return '^for help enter help()'
 

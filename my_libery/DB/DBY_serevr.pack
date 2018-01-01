@@ -1,0 +1,1 @@
+set_job('DBY')#$#run_server_db('www', 'pass')#$#connect_db('127.0.0.1', 'www', 'pass')

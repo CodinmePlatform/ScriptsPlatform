@@ -31,15 +31,21 @@ class myprosses(job):
 
     def load(self, name, password = ''):
         self.db = DBY_obj(password)
+        proj_old = self.progrem
         try:
             progrem = self.db.load(name + self.fileType)
         except:
             return('*<Error location>')
         try:
             self.progrem = eval(progrem)
+            if type(self.progrem) == list:
+                raise 
         except:
+            self.progrem = proj_old
             if password:
                 return('*<password worng!>')
+            else:
+                return('*<user name or password worng>')
         
         for a, b in self.progrem.items():
             if a[0] == "_":
@@ -56,7 +62,7 @@ class myprosses(job):
     def add(self, code, name, loc):
         self.cods[name] = code_node(name, loc, code)
 
-    def show(self, typ):
+    def show(self, typ = ''):
         all_st = ''
         try:
             return typ.show()

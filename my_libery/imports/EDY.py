@@ -3,7 +3,7 @@ from hashlib import shake_256
 class EDY(object):
     def __init__(self, password):
         k1, k2 = self.new_keys(password)
-        self.strong = 5
+        self.strong = 10
         self.range_of_chars = 255
         self.k1 = k1
         self.k2 = k2

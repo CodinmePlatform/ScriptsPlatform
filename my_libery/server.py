@@ -1,26 +1,28 @@
 import socket, time, select
-from my_libery.proj import myprosses
 from my_libery.imports.EDY import EDY
 from my_libery.imports.job import job
 
+def info(sock):
+    sock.send(b'not found protocol')
+
 class server_obj(job):
-    def __init__(self, name = '', password = '', script = myprosses):
+    def __init__(self, name = '', password = '', proto = info):
         self.name = name
         self.password = password
+        self.proto = proto
         self.activ = True
         self.users = {}
-        self.proj = script()
         self.port = 28
         self.cmd = None
         self.s = None
-        try:
-            self.proj.load(name, password)
-        except:
-            self.proj.new(name, password)
         self.control = {}
         self.names = {}
         
     def run(self):
+        try:
+            self.s.close()
+        except:
+            pass
         self.s = socket.socket()
         self.s.bind(('0.0.0.0', self.port))
         self.s.listen(5)
@@ -47,16 +49,8 @@ class server_obj(job):
     
     def send_waiting_messages(self, wlist):
         for sock in wlist:
-            if sock in self.users.keys() and self.users[sock]:
-                data = self.users[sock]
-                try:
-                    out = eval('self.proj.' + data)
-                except:
-                    out = '<Error try help()>'
-                if out == None:
-                    out = 'None'
-                sock.send(str(self.ed.en(str(out))).encode())
-                self.users[sock] = ''
+            self.proto(sock, self.users)
+            self.users[sock] = ''
 
     def connect(self, name_and_pass, new_socket, ocs):
         wellcom = b'ok'
